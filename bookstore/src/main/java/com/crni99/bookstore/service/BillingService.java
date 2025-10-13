@@ -96,7 +96,7 @@ public class BillingService {
 		List<CustomerBooks> customerBooks = customerBooksMap.entrySet().stream()
 				.map(entry -> new CustomerBooks(entry.getKey(), entry.getValue())).collect(Collectors.toList());
 
-		customerBooks.stream().filter(c -> c.getCustomer().getId().equals(id)).findAny().isPresent();
+		customerBooks = customerBooks.stream().filter(c -> c.getCustomer().getId().equals(id)).toList();
 
 		return customerBooks;
 	}
