@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.crni99.bookstore.model.Book;
 import com.crni99.bookstore.service.BookService;
 
-@Controller
+// @Controller
 public class HomeController {
 	
 	private static final int pageSizeDefault = 6;

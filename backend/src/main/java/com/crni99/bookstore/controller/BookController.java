@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.crni99.bookstore.model.Book;
 import com.crni99.bookstore.service.BookService;
 
-@Controller
+// @Controller
 @RequestMapping("/book")
 public class BookController {
 
