@@ -26,9 +26,9 @@ import com.crni99.bookstore.repository.OrderRepository;
 
 class BillingServiceTest {
 
-	private OrderRepository orderRepository = mock(OrderRepository.class);
-	private BillingRepository billingRepository = mock(BillingRepository.class);
-	private BillingService billingService = new BillingService(orderRepository, billingRepository);
+	private final OrderRepository orderRepository = mock(OrderRepository.class);
+	private final BillingRepository billingRepository = mock(BillingRepository.class);
+	private final BillingService billingService = new BillingService(orderRepository, billingRepository);
 
 	@Test
 	void findPaginated_shouldReturnPaginatedBooks() {

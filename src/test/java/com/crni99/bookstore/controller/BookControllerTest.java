@@ -26,8 +26,8 @@ import com.crni99.bookstore.service.BookService;
 
 class BookControllerTest {
 
-	private BookService bookService = mock(BookService.class);
-	private BookController bookController = new BookController(bookService);
+	private final BookService bookService = mock(BookService.class);
+	private final BookController bookController = new BookController(bookService);
 
 	@Test
 	void findPaginated_shouldReturnListOfBooksWhenTermIsNull() {

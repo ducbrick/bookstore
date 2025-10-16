@@ -25,8 +25,8 @@ import com.crni99.bookstore.repository.OrderRepository;
 @Service
 public class BillingService {
 
-	private OrderRepository orderRepository;
-	private BillingRepository billingRepository;
+	private final OrderRepository orderRepository;
+	private final BillingRepository billingRepository;
 
 	public BillingService(OrderRepository orderRepository, BillingRepository billingRepository) {
 		this.orderRepository = orderRepository;
