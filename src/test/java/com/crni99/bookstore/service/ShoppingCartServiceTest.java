@@ -18,26 +18,26 @@ import com.crni99.bookstore.model.Book;
 
 class ShoppingCartServiceTest {
 
-	private Long ID_1 = 1L;
-	private String NAME_1 = "The Lord of the Rings";
-	private BigDecimal PRICE_1 = new BigDecimal(99.99);
-	private String AUTHORS_1 = "J. R. R. Tolkien";
-	private String ISBN_1 = "978-0-261-10320-7";
-	private String PUBLISHER_1 = "Allen & Unwin";
-	private LocalDate DOB_1 = LocalDate.of(1954, 07, 29);
+	private final Long ID_1 = 1L;
+	private final String NAME_1 = "The Lord of the Rings";
+	private final BigDecimal PRICE_1 = new BigDecimal("99.99");
+	private final String AUTHORS_1 = "J. R. R. Tolkien";
+	private final String ISBN_1 = "978-0-261-10320-7";
+	private final String PUBLISHER_1 = "Allen & Unwin";
+	private final LocalDate DOB_1 = LocalDate.of(1954, 7, 29);
 
-	private Long ID_2 = 2L;
-	private String NAME_2 = "The Da Vinci Code";
-	private BigDecimal PRICE_2 = new BigDecimal(250.89);
-	private String AUTHORS_2 = "Dan Brown";
-	private String ISBN_2 = "0-385-50420-9";
-	private String PUBLISHER_2 = "Doubleday";
-	private LocalDate DOB_2 = LocalDate.of(2003, 04, 02);
+	private final Long ID_2 = 2L;
+	private final String NAME_2 = "The Da Vinci Code";
+	private final BigDecimal PRICE_2 = new BigDecimal("250.89");
+	private final String AUTHORS_2 = "Dan Brown";
+	private final String ISBN_2 = "0-385-50420-9";
+	private final String PUBLISHER_2 = "Doubleday";
+	private final LocalDate DOB_2 = LocalDate.of(2003, 4, 2);
 
-	private BigDecimal shipping = new BigDecimal(6.00);
+	private final BigDecimal shipping = new BigDecimal("6.00");
 
-	private HttpSession session = mock(HttpSession.class);
-	private ShoppingCartService shoppingCartService = new ShoppingCartService(session);
+	private final HttpSession session = mock(HttpSession.class);
+	private final ShoppingCartService shoppingCartService = new ShoppingCartService(session);
 
 	@Test
 	void ShouldRetrieveProductsFromCart() {
@@ -47,7 +47,7 @@ class ShoppingCartServiceTest {
 
 		when(shoppingCartService.getCart()).thenReturn(books);
 		assertThat(books.size()).isEqualTo(2);
-		assertThat(books.get(0)).isSameAs(book1);
+		assertThat(books.getFirst()).isSameAs(book1);
 	}
 
 	@Test
@@ -95,7 +95,7 @@ class ShoppingCartServiceTest {
 
 		List<Book> updatedCart = shoppingCartService.getCart();
 		assertThat(updatedCart.contains(book2)).isFalse();
-		assertThat(book1).isEqualTo(updatedCart.get(0));
+		assertThat(book1).isEqualTo(updatedCart.getFirst());
 	}
 
 }
