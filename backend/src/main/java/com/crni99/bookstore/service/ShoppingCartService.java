@@ -48,7 +48,7 @@ public class ShoppingCartService {
 
 	public void deleteProductWithId(Long bookId) {
 		List<Book> cart = getCart();
-		for (int i = 0; i <= cart.size(); i++) {
+		for (int i = 0; i < cart.size(); i++) {
 			if (cart.get(i).getId() == bookId) {
 				cart.remove(cart.get(i));
 			}

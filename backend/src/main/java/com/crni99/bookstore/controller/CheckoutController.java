@@ -18,7 +18,7 @@ import com.crni99.bookstore.service.BillingService;
 import com.crni99.bookstore.service.EmailService;
 import com.crni99.bookstore.service.ShoppingCartService;
 
-@Controller
+// @Controller
 @RequestMapping("/checkout")
 public class CheckoutController {
 

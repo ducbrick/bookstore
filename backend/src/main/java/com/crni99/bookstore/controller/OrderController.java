@@ -19,7 +19,7 @@ import com.crni99.bookstore.model.Customer;
 import com.crni99.bookstore.model.CustomerBooks;
 import com.crni99.bookstore.service.BillingService;
 
-@Controller
+// @Controller
 @RequestMapping("/orders")
 public class OrderController {
 

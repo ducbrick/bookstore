@@ -13,7 +13,7 @@ import com.crni99.bookstore.model.Book;
 import com.crni99.bookstore.service.BookService;
 import com.crni99.bookstore.service.ShoppingCartService;
 
-@Controller
+// @Controller
 @RequestMapping("/cart")
 public class CartController {
 
