@@ -6,7 +6,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -26,10 +29,10 @@ public class SecurityConfig {
         return new JdbcUserDetailsManager(securityDataSource);
     }
 
-    /** ✅ Dùng BCrypt để mã hoá mật khẩu **/
+    /** ✅ Dùng Delegating Password Encoder để hỗ trợ {noop} passwords **/
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     /** ✅ Cấu hình HttpSecurity thay cho WebSecurityConfigurerAdapter **/
@@ -37,17 +40,31 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+								.cors(cors -> cors.disable())
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
                 )
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
-                );
+								.formLogin(form -> form
+												.loginProcessingUrl("/login")
+												.successHandler((req, res, auth) -> {
+																res.setStatus(HttpServletResponse.SC_OK);
+																res.setContentType("application/json");
+																res.getWriter().write("{\"message\": \"Login successful\"}");
+												})
+												.failureHandler((req, res, ex) -> {
+																res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+																res.setContentType("application/json");
+																res.getWriter().write("{\"error\": \"Invalid credentials\"}");
+												})
+								)
+								.logout(logout -> logout
+												.logoutUrl("/logout")
+												.logoutSuccessHandler((req, res, auth) -> {
+																res.setStatus(HttpServletResponse.SC_OK);
+																res.setContentType("application/json");
+																res.getWriter().write("{\"message\": \"Logged out successfully\"}");
+												})
+								);
 
         // H2 console hiển thị đúng
         http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
