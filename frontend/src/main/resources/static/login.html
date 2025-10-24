@@ -68,25 +68,44 @@
         const loginForm = document.querySelector('form[name="f"]');
         const errorMessage = document.getElementById('error-message');
 
-        // Set form action to backend URL
-        loginForm.action = window.APP_CONFIG.BACKEND_URL + '/login';
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault(); // Prevent default form submission
 
-        // Check for error parameter in URL (backend redirects here on failure)
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('error')) {
-            errorMessage.style.display = 'block';
-        }
-
-        loginForm.addEventListener('submit', function(e) {
             // Basic client-side validation
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
             if (!username || !password) {
-                e.preventDefault();
                 errorMessage.textContent = 'Please enter both username and password.';
                 errorMessage.style.display = 'block';
-                return false;
+                return;
+            }
+
+            // Send AJAX request
+            try {
+                const response = await fetch(window.APP_CONFIG.BACKEND_URL + '/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        username: username,
+                        password: password
+                    }),
+                    credentials: 'include' // Include cookies for authentication
+                });
+
+                if (response.ok) {
+                    // Success: Redirect or update UI
+                    window.location.href = '/'; // Or handle as needed
+                } else {
+                    // Failure: Show error
+                    errorMessage.textContent = 'Invalid username or password.';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Login failed. Please try again.';
+                errorMessage.style.display = 'block';
             }
         });
     });
