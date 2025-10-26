@@ -30,7 +30,6 @@ public class NewCartController {
 
 	private final ShoppingCartService cartService;
 	private final BookService bookService;
-	private final BillingService billingService;
 
 	@GetMapping
 	public List<Book> getCart() {
@@ -77,17 +76,7 @@ public class NewCartController {
 		return cartService.getshippingCosts();
 	}
 
-	@PostMapping("/{id}")
-	public String addToCart(@PathVariable("id") Long id) {
-		List<Book> cart = cartService.getCart();
-		Book book = bookService.findBookById(id).get();
-		if (book != null) {
-			cart.add(book);
-			log.info("Added book with id {} to cart", id);
-		}
-		cartService.getSession().setAttribute("cart", cart);
-		return "Added book successfully!";
-	}
+	
 
 	
 }

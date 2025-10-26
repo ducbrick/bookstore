@@ -25,4 +25,9 @@ public class BookstoreFrontendController {
     public String orders() {
         return "orders.html";
     }
+
+    @GetMapping("/form")
+    public String form() {
+        return "form.html";
+    }
 }
