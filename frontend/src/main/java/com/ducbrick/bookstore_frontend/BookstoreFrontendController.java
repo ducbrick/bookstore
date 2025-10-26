@@ -31,6 +31,11 @@ public class BookstoreFrontendController {
         return "form.html";
     }
 
+    @GetMapping("/oops")
+    public String error() {
+        return "error.html";
+    }
+
     @GetMapping("/list")
     public String list() {
         return "list.html";
