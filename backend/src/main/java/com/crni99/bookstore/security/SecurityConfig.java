@@ -53,9 +53,6 @@ public class SecurityConfig {
                     return config;
                 }))
                 .authorizeHttpRequests(auth -> auth
-												.requestMatchers(HttpMethod.POST, "/books").authenticated()
-												.requestMatchers(HttpMethod.PUT, "/books/**").authenticated()
-												.requestMatchers(HttpMethod.DELETE, "/books/**").authenticated()
                         .anyRequest().permitAll()
                 )
 								.formLogin(form -> form
