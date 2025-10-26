@@ -136,9 +136,10 @@
         const shippingCostEl = document.getElementById('shipping-cost');
         const totalPriceEl = document.getElementById('total-price');
 
+        let cartProducts = []; // Store cart products for submission
+
         const CART_API_URL = window.APP_CONFIG.BACKEND_URL + '/carts';
-        // You will need to create this new endpoint
-        const CHECKOUT_API_URL = window.APP_CONFIG.BACKEND_URL + '/api/checkout';
+        const CHECKOUT_API_URL = window.APP_CONFIG.BACKEND_URL + '/api/orders';
 
         // --- 1. Load Order Summary on Page Load ---
         async function loadOrderSummary() {
@@ -159,6 +160,8 @@
                 const products = await cartRes.json();
                 const total = await totalRes.json();
                 const shipping = await shippingRes.text(); // Assuming it returns a plain string
+
+                cartProducts = products; // Store for submission
 
                 // Render data
                 renderCartSummary(products);
@@ -209,12 +212,11 @@
             // Combine into one payload
             const orderData = {
                 customer: customerData,
-                paymentMethod: paymentMethod
+                books: cartProducts
             };
 
             try {
-                // This is the new endpoint you must create
-                const response = await fetch(CHECKOUT_API_URL + '/placeOrder', {
+                const response = await fetch(CHECKOUT_API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',

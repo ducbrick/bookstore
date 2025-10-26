@@ -10,8 +10,7 @@
     import org.springframework.http.ResponseEntity;
     import org.springframework.web.bind.annotation.*;
 
-    import java.util.Collections;
-    import java.util.List;
+import java.util.List;
 
     @RestController
     @RequestMapping("/api")
@@ -34,7 +33,7 @@
 
         @PostMapping("/orders")
         public ResponseEntity<String> createOrder(@RequestBody OrderRequest request) {
-            billingService.createOrder(request.getCustomer(), Collections.singletonList((Book) request.getBooks()));
+            billingService.createOrder(request.getCustomer(), request.getBooks());
             return ResponseEntity.status(HttpStatus.CREATED).body("Order created successfully");
         }
 
