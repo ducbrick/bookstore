@@ -142,7 +142,7 @@
 
                 if (response.ok) {
                     // Success! Redirect to the admin page (or home page)
-                    window.location.href = '/book.html'; // Or '/'
+                    window.location.href = '/list.html'; // Or '/'
                 } else if (response.status === 400) {
                     // Validation error
                     const errors = await response.json(); // Assuming backend sends validation errors
