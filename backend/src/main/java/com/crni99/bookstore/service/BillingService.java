@@ -46,7 +46,7 @@ public class BillingService {
 		ArrayList<Order> orders = null;
 		List<CustomerBooks> list;
 
-		if (term == null) {
+		if (term == null || term.isBlank()) {
 			orders = (ArrayList<Order>) orderRepository.findAll();
 		} else {
 			LocalDate date = LocalDate.parse(term);

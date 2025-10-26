@@ -5,12 +5,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.crni99.bookstore.model.CustomerBooks;
 import com.crni99.bookstore.service.BillingService;
 
 import lombok.RequiredArgsConstructor;
 
+@RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
 public class NewOrderController {
