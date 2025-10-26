@@ -1,10 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8" />
+    <title>Book Store</title>
+    <link href="images/logo.png" rel="shortcut icon" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous" />
+    <link href="css/style.css" rel="stylesheet" />
+    <script src="js/config.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </head>
-<body>
 
+<body>
+<nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Book Store</a>
+    <a class="navbar-brand" href="/cart.html">Cart</a>
+    <a class="navbar-brand" href="/book.html">Admin</a> </nav>
+
+<div class="container" id="main-content">
+    <div class="row">
+        <div class="col-6 no-padding">
+            <form class="form-inline" id="search-form">
+                <input class="form-control mr-sm-2" type="search" name="term" id="search-term"
+                       placeholder="Search by name ..." />
+                <button class="btn btn-primary" type="submit">
+                    <i class="fa fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 alert alert-success alert-dismissible fade show" role="alert" id="success-message" style="display: none;">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="col-12 alert alert-danger" role="alert" id="error-message" style="display: none;">
+        </div>
+
+        <div id="no-books-message" style="display: none;">
+            <h5>There are no books in stock</h5>
+        </div>
+
+        <div class="card-deck" id="book-list-container"
+             style="display: flex; justify-content: space-around; margin-top: 20px;">
+        </div>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination" id="pagination-container">
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<footer class="container" style="padding: 50px;">
+    <strong>&copy; <a href="https://github.com/crni99/" target="_blank">github/crni99</a></strong>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const bookContainer = document.getElementById('book-list-container');
+        const paginationContainer = document.getElementById('pagination-container');
+        const searchForm = document.getElementById('search-form');
+        const searchTermInput = document.getElementById('search-term');
+        const noBooksMsg = document.getElementById('no-books-message');
+        const successMsg = document.getElementById('success-message');
+        const errorMsg = document.getElementById('error-message');
+
+        // API Endpoints
+        const BOOK_API_URL = window.APP_CONFIG.BACKEND_URL + '/books'; // You must create this
+        const CART_API_URL = window.APP_CONFIG.BACKEND_URL + '/carts';    // This exists
+
+        // --- 1. Main Function: Fetch and Render Books ---
+        async function fetchBooks(page = 0, size = 6, term = '') {
+            // Clear old content and messages
+            bookContainer.innerHTML = '';
+            paginationContainer.innerHTML = '';
+            noBooksMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+
+            // Build query URL
+            const url = new URL(BOOK_API_URL);
+            url.searchParams.append('page', page);
+            url.searchParams.append('size', size);
+            if (term) {
+                url.searchParams.append('term', term);
+            }
+
+            try {
+                const response = await fetch(url.toString(), {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const bookPage = await response.json(); // Expects Spring Page<> object
+
+                    if (bookPage && bookPage.content && bookPage.content.length > 0) {
+                        renderBooks(bookPage.content);
+                        renderPagination(bookPage);
+                    } else {
+                        noBooksMsg.style.display = 'block';
+                    }
+                } else {
+                    showError('Could not load books. Please try again.');
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                showError('Could not connect to the server.');
+            }
+        }
+
+        // --- 2. Helper: Render Book Cards ---
+        function renderBooks(books) {
+            books.forEach(book => {
+                const cardHtml = `
+                    <div class="col-sm-6" style="max-width: 32rem; display: inline-block; width: 32rem;">
+                       <div class="card text-white bg-dark" style="width: 32rem; margin-bottom: 50px">
+                          <div class="card-body">
+                             <h5 class="card-title">${book.name}</h5>
+                             <p class="card-text">${book.authors}</p>
+                          </div>
+                          <ul class="list-group list-group-flush">
+                             <li class="list-group-item text-white bg-dark">${book.publisher}</li>
+                             <li class="list-group-item text-white bg-dark">${book.publishedOn}</li>
+                             <li class="list-group-item text-white bg-dark">${book.isbn}</li>
+                          </ul>
+                          <div class="card-footer" style="display: inline">
+                             <i class="font-weight-bold align-middle">${book.price} $</i>
+                             <button class="btn btn-success add-to-cart-btn" data-book-id="${book.id}" style="float: right">
+                                <i class="fa fa-plus-circle"></i> Add to cart
+                             </button>
+                          </div>
+                       </div>
+                    </div>
+                `;
+                bookContainer.innerHTML += cardHtml;
+            });
+        }
+
+        // --- 3. Helper: Render Pagination ---
+        function renderPagination(bookPage) {
+            if (bookPage.totalPages <= 1) return;
+
+            for (let i = 0; i < bookPage.totalPages; i++) {
+                const pageNum = i;
+                const li = document.createElement('li');
+                li.className = `page-item font-weight-bold ${pageNum === bookPage.number ? 'active' : ''}`;
+
+                const a = document.createElement('a');
+                a.className = 'page-link';
+                a.href = '#';
+                a.textContent = pageNum + 1; // Show 1-based index
+                a.dataset.page = pageNum;
+
+                li.appendChild(a);
+                paginationContainer.appendChild(li);
+            }
+        }
+
+        // --- 4. Event Listeners ---
+
+        // "Add to cart" (uses Event Delegation)
+        bookContainer.addEventListener('click', async function(e) {
+            const addButton = e.target.closest('.add-to-cart-btn');
+            if (addButton) {
+                const bookId = addButton.dataset.bookId;
+                try {
+                    // This is the new endpoint you must add to NewCartController
+                    const response = await fetch(`${CART_API_URL}/${bookId}`, {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+
+                    if (response.ok) {
+                        showSuccess('Added book successfully!');
+                    } else {
+                        showError('Failed to add book to cart.');
+                    }
+                } catch (error) {
+                    showError('Connection error.');
+                }
+            }
+        });
+
+        // Search
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const term = searchTermInput.value;
+            fetchBooks(0, 6, term);
+        });
+
+        // Pagination
+        paginationContainer.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (e.target.tagName === 'A' && e.target.dataset.page) {
+                const page = e.target.dataset.page;
+                const term = searchTermInput.value;
+                fetchBooks(page, 6, term);
+            }
+        });
+
+        // --- Helper functions for messages ---
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+        }
+
+        function showSuccess(message) {
+            successMsg.firstChild.nodeValue = message; // Set text
+            successMsg.style.display = 'block';
+        }
+
+        // --- Initial Load ---
+        fetchBooks(); // Load first page
+    });
+</script>
 </body>
 </html>

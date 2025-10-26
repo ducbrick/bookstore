@@ -1,10 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="utf-8" />
+    <title>Book Store - Book Form</title>
+    <link href="images/logo.png" rel="shortcut icon" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous" />
+    <link href="css/style.css" rel="stylesheet" />
+    <script src="js/config.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </head>
+
 <body>
-$END$
+<nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Book Store</a>
+    <a class="navbar-brand" href="/cart.html">Cart</a>
+    <a class="navbar-brand" href="/book.html">Admin</a>
+</nav>
+
+<div class="container" id="main-content">
+    <div class="row d-flex justify-content-center">
+        <form style="min-width: 300px;" id="book-form">
+            <h5 class="text-center">Book form</h5>
+
+            <div class="alert alert-danger" role="alert" id="error-message" style="display: none;">
+            </div>
+
+            <input type="hidden" id="book-id" />
+
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="Book name" id="book-name" />
+            </div>
+
+            <div class="form-group">
+                <input class="form-control" type="number" placeholder="Book price" step="any" id="book-price" />
+            </div>
+
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="Book authors" id="book-authors" />
+            </div>
+
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="Book ISBN" id="book-isbn" />
+            </div>
+
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="Book publisher" id="book-publisher" />
+            </div>
+
+            <div class="form-group">
+                <input class="form-control" type="date" placeholder="Book published on" id="book-publishedOn" />
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-block btn-primary">
+                    <i class="fa fa-save"></i> Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const bookForm = document.getElementById('book-form');
+        const errorMsg = document.getElementById('error-message');
+        const bookIdField = document.getElementById('book-id');
+
+        // API Endpoint
+        const API_URL = window.APP_CONFIG.BACKEND_URL + '/api/books'; // Using the /api/books endpoint
+
+        // --- 1. Check if we are editing or creating ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = urlParams.get('id');
+
+        if (bookId) {
+            // This is an "Edit" operation. Fetch the book data.
+            fetchBookData(bookId);
+        }
+
+        // --- 2. Function to fetch and populate book data ---
+        async function fetchBookData(id) {
+            try {
+                const response = await fetch(`${API_URL}/${id}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const book = await response.json();
+                    // Populate the form fields
+                    bookIdField.value = book.id;
+                    document.getElementById('book-name').value = book.name;
+                    document.getElementById('book-price').value = book.price;
+                    document.getElementById('book-authors').value = book.authors;
+                    document.getElementById('book-isbn').value = book.isbn;
+                    document.getElementById('book-publisher').value = book.publisher;
+                    document.getElementById('book-publishedOn').value = book.publishedOn;
+                } else {
+                    showError('Could not find book to edit.');
+                }
+            } catch (error) {
+                showError('Connection error.');
+            }
+        }
+
+        // --- 3. Handle the form submission ---
+        bookForm.addEventListener('submit', async function(e) {
+            e.preventDefault(); // Stop the form from submitting normally
+            errorMsg.style.display = 'none'; // Hide old errors
+
+            // Gather data from the form
+            const bookData = {
+                id: bookIdField.value || null, // Will be null for new books
+                name: document.getElementById('book-name').value,
+                price: document.getElementById('book-price').value,
+                authors: document.getElementById('book-authors').value,
+                isbn: document.getElementById('book-isbn').value,
+                publisher: document.getElementById('book-publisher').value,
+                publishedOn: document.getElementById('book-publishedOn').value
+            };
+
+            // Determine if it's a POST (create) or PUT (update)
+            const isUpdate = !!bookData.id;
+            const method = isUpdate ? 'PUT' : 'POST';
+            const url = isUpdate ? `${API_URL}/${bookData.id}` : API_URL;
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Add CSRF token header if needed
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(bookData)
+                });
+
+                if (response.ok) {
+                    // Success! Redirect to the admin page (or home page)
+                    window.location.href = '/book.html'; // Or '/'
+                } else if (response.status === 400) {
+                    // Validation error
+                    const errors = await response.json(); // Assuming backend sends validation errors
+                    showError('Validation failed. Check the form.', errors);
+                } else {
+                    showError('Save failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                showError('Could not connect to the server.');
+            }
+        });
+
+        // --- 4. Helper function for errors ---
+        function showError(message, errors = null) {
+            let html = `<strong>${message}</strong>`;
+            if (errors && typeof errors === 'object') {
+                html += '<ul>';
+                for (const key in errors) {
+                    html += `<li>${key}: ${errors[key]}</li>`;
+                }
+                html += '</ul>';
+            }
+            errorMsg.innerHTML = html;
+            errorMsg.style.display = 'block';
+        }
+    });
+</script>
 </html>
