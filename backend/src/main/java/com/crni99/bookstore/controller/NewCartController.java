@@ -3,10 +3,20 @@ package com.crni99.bookstore.controller;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.crni99.bookstore.service.BookService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.crni99.bookstore.model.Book;
+import com.crni99.bookstore.model.CustomerBooks;
+import com.crni99.bookstore.service.BillingService;
+import com.crni99.bookstore.service.BookService;
 import com.crni99.bookstore.service.ShoppingCartService;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 public class NewCartController {
 
 	private final ShoppingCartService cartService;
-    private final BookService bookService;
+	private final BookService bookService;
+	private final BillingService billingService;
 
 	@GetMapping
 	public List<Book> getCart() {
@@ -65,4 +76,18 @@ public class NewCartController {
 		log.info("Get shipping cost");
 		return cartService.getshippingCosts();
 	}
+
+	@PostMapping("/{id}")
+	public String addToCart(@PathVariable("id") Long id) {
+		List<Book> cart = cartService.getCart();
+		Book book = bookService.findBookById(id).get();
+		if (book != null) {
+			cart.add(book);
+			log.info("Added book with id {} to cart", id);
+		}
+		cartService.getSession().setAttribute("cart", cart);
+		return "Added book successfully!";
+	}
+
+	
 }

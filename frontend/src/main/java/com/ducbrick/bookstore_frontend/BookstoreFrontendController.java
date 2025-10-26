@@ -20,4 +20,9 @@ public class BookstoreFrontendController {
     public String cart() {
         return "cart.html";
     }
+
+    @GetMapping("/orders")
+    public String orders() {
+        return "orders.html";
+    }
 }
