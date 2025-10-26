@@ -30,4 +30,9 @@ public class BookstoreFrontendController {
     public String form() {
         return "form.html";
     }
+
+    @GetMapping("/list")
+    public String list() {
+        return "list.html";
+    }
 }
