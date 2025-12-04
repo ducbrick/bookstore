@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -27,18 +28,6 @@ public class SecurityConfig {
         this.securityDataSource = securityDataSource;
     }
 
-    /** ✅ Cấu hình Authentication dùng JDBC **/
-    @Bean
-    public UserDetailsManager userDetailsManager() {
-        return new JdbcUserDetailsManager(securityDataSource);
-    }
-
-    /** ✅ Dùng Delegating Password Encoder để hỗ trợ {noop} passwords **/
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
     /** ✅ Cấu hình HttpSecurity thay cho WebSecurityConfigurerAdapter **/
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -53,29 +42,13 @@ public class SecurityConfig {
                     return config;
                 }))
                 .authorizeHttpRequests(auth -> auth
+												.requestMatchers(HttpMethod.GET, "/books/**").permitAll()
+												.requestMatchers("/books/**").hasAuthority("SCOPE_admin")
+												.requestMatchers("/api/books").hasAuthority("SCOPE_admin")
+												.requestMatchers("/api/orders/*").hasAuthority("SCOPE_admin")
                         .anyRequest().permitAll()
                 )
-								.formLogin(form -> form
-												.loginProcessingUrl("/login")
-												.successHandler((req, res, auth) -> {
-																res.setStatus(HttpServletResponse.SC_OK);
-																res.setContentType("application/json");
-																res.getWriter().write("{\"message\": \"Login successful\"}");
-												})
-												.failureHandler((req, res, ex) -> {
-																res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-																res.setContentType("application/json");
-																res.getWriter().write("{\"error\": \"Invalid credentials\"}");
-												})
-								)
-								.logout(logout -> logout
-												.logoutUrl("/logout")
-												.logoutSuccessHandler((req, res, auth) -> {
-																res.setStatus(HttpServletResponse.SC_OK);
-																res.setContentType("application/json");
-																res.getWriter().write("{\"message\": \"Logged out successfully\"}");
-												})
-								);
+								.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
         // H2 console hiển thị đúng
         http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
