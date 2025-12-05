@@ -46,6 +46,7 @@ public class SecurityConfig {
 												.requestMatchers("/books/**").hasAuthority("SCOPE_admin")
 												.requestMatchers("/api/books").hasAuthority("SCOPE_admin")
 												.requestMatchers("/api/orders/*").hasAuthority("SCOPE_admin")
+												.requestMatchers("/orders").hasAuthority("SCOPE_admin")
                         .anyRequest().permitAll()
                 )
 								.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
