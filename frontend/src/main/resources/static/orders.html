@@ -232,7 +232,7 @@
                 // User is not logged in - show login
                 authText.textContent = 'Login';
                 authBtn.onclick = function() {
-                    window.location.href = '/login.html';
+                    window.location.href = 'https://ducbrick.us.auth0.com/authorize?audience=https://sa.ducbrick.com&response_type=code&client_id=wrbu1ylF5tJr1mJmSh0o4RrAT8Zzeqnk&scope=openid offline_access admin&redirect_uri=http://localhost:8081/code';
                 };
             }
         }
@@ -248,7 +248,7 @@
                 if (response.ok) {
                     // Clear cookie and redirect
                     document.cookie = 'access token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                    window.location.href = '/login.html';
+                    window.location.href = '/';
                 } else {
                     showError('Logout failed.');
                 }
