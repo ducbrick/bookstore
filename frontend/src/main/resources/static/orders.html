@@ -238,23 +238,9 @@
         }
 
         // Logout function
-        async function logout() {
-            try {
-                const response = await fetch(window.APP_CONFIG.BACKEND_URL + '/logout', {
-                    method: 'POST',
-                    credentials: 'include'
-                });
-
-                if (response.ok) {
-                    // Clear cookie and redirect
-                    document.cookie = 'access token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                    window.location.href = '/';
-                } else {
-                    showError('Logout failed.');
-                }
-            } catch (error) {
-                showError('Connection error during logout.');
-            }
+        function logout() {
+            document.cookie = 'access token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            window.location.href = '/';
         }
 
         // Helper function to get cookie
