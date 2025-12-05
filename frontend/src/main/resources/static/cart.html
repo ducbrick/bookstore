@@ -6,9 +6,10 @@
     <link href="images/logo.png" rel="shortcut icon" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous" />
-    <link href="css/style.css" rel="stylesheet" />
-    <script src="js/config.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+     <link href="css/style.css" rel="stylesheet" />
+     <script src="js/config.js"></script>
+     <script src="js/auth.js"></script>
+     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </head>
@@ -79,10 +80,9 @@
 
             try {
                 // UPDATED: Fetches from /carts (GET)
-                const response = await fetch(API_URL, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
+                 const response = await window.AuthUtils.authenticatedFetch(API_URL, {
+                     method: 'GET'
+                 });
 
                 if (response.ok) {
                     const cartItems = await response.json();
@@ -110,10 +110,9 @@
         // NEW function to use your /carts/total endpoint
         async function fetchTotalPrice() {
             try {
-                const response = await fetch(API_URL + '/total', {
-                    method: 'GET',
-                    credentials: 'include'
-                });
+                const response = await window.AuthUtils.authenticatedFetch(API_URL + '/total', {
+                     method: 'GET'
+                 });
                 if (response.ok) {
                     const total = await response.json();
                     totalDisplay.textContent = `Total: ${total} $`;
@@ -155,11 +154,10 @@
             if (removeButton) {
                 const bookId = removeButton.dataset.bookId;
                 try {
-                    // UPDATED: Uses DELETE /carts/{id}
-                    const response = await fetch(`${API_URL}/${bookId}`, {
-                        method: 'DELETE',
-                        credentials: 'include'
-                    });
+                     // UPDATED: Uses DELETE /carts/{id}
+                     const response = await window.AuthUtils.authenticatedFetch(`${API_URL}/${bookId}`, {
+                         method: 'DELETE'
+                     });
 
                     if (response.ok) {
                         showSuccess('Item removed from cart.');
@@ -177,11 +175,10 @@
         deleteAllBtn.addEventListener('click', async function() {
             if (confirm('Are you sure you want to empty your cart?')) {
                 try {
-                    // UPDATED: Uses DELETE /carts
-                    const response = await fetch(API_URL, {
-                        method: 'DELETE',
-                        credentials: 'include'
-                    });
+                     // UPDATED: Uses DELETE /carts
+                     const response = await window.AuthUtils.authenticatedFetch(API_URL, {
+                         method: 'DELETE'
+                     });
 
                     if (response.ok) {
                         fetchCart(); // Reload the cart
