@@ -37,9 +37,9 @@
                 </a>
             </div>
             <div class="col-4 no-padding">
-                <a href="/login.html" class="btn btn-danger float-right">
-                    <i class="fa fa-key"></i> Log out
-                </a>
+                <button id="auth-btn" class="btn btn-danger float-right">
+                    <i class="fa fa-key"></i> <span id="auth-text">Log out</span>
+                </button>
             </div>
         </div>
 
@@ -216,8 +216,58 @@
             successMsg.style.display = 'block';
         }
 
+        // Authentication check function
+        function checkAuth() {
+            const accessToken = getCookie('access token');
+            const authBtn = document.getElementById('auth-btn');
+            const authText = document.getElementById('auth-text');
+
+            if (accessToken) {
+                // User is logged in - show logout
+                authText.textContent = 'Logout';
+                authBtn.onclick = function() {
+                    logout();
+                };
+            } else {
+                // User is not logged in - show login
+                authText.textContent = 'Login';
+                authBtn.onclick = function() {
+                    window.location.href = '/login.html';
+                };
+            }
+        }
+
+        // Logout function
+        async function logout() {
+            try {
+                const response = await fetch(window.APP_CONFIG.BACKEND_URL + '/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    // Clear cookie and redirect
+                    document.cookie = 'access token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    window.location.href = '/login.html';
+                } else {
+                    showError('Logout failed.');
+                }
+            } catch (error) {
+                showError('Connection error during logout.');
+            }
+        }
+
+        // Helper function to get cookie
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
         // --- Initial Load ---
         fetchOrders(); // Load first page
+        checkAuth(); // Check authentication state
     });
     </script>
 </body>

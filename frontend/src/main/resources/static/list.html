@@ -42,8 +42,8 @@
             </a>
         </div>
         <div class="col-3 no-padding">
-            <button id="logout-btn" class="btn btn-danger float-right">
-                <i class="fa fa-key"></i> Log out
+            <button id="auth-btn" class="btn btn-danger float-right">
+                <i class="fa fa-key"></i> <span id="auth-text">Log out</span>
             </button>
         </div>
     </div>
@@ -104,7 +104,7 @@
         const successMsg = document.getElementById('success-message');
         const successText = document.getElementById('success-text');
         const errorMsg = document.getElementById('error-message');
-        const logoutBtn = document.getElementById('logout-btn');
+        const authBtn = document.getElementById('auth-btn');
 
         // API Endpoint
         const API_URL = window.APP_CONFIG.BACKEND_URL + '/books';
@@ -238,25 +238,54 @@
             }
         });
 
-        // Logout
-        logoutBtn.addEventListener('click', async function() {
+        // Authentication check function
+        function checkAuth() {
+            const accessToken = getCookie('access token');
+            const authBtn = document.getElementById('auth-btn');
+            const authText = document.getElementById('auth-text');
+
+            if (accessToken) {
+                // User is logged in - show logout
+                authText.textContent = 'Logout';
+                authBtn.onclick = function() {
+                    logout();
+                };
+            } else {
+                // User is not logged in - show login
+                authText.textContent = 'Login';
+                authBtn.onclick = function() {
+                    window.location.href = '/login.html';
+                };
+            }
+        }
+
+        // Logout function
+        async function logout() {
             try {
-                // Spring Security's default logout is POST /logout
                 const response = await fetch(window.APP_CONFIG.BACKEND_URL + '/logout', {
                     method: 'POST',
                     credentials: 'include'
-                    // Add CSRF header if needed
                 });
 
                 if (response.ok) {
-                    window.location.href = '/login.html'; // Redirect to login
+                    // Clear cookie and redirect
+                    document.cookie = 'access token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    window.location.href = '/login.html';
                 } else {
                     showError('Logout failed.');
                 }
             } catch (error) {
                 showError('Connection error during logout.');
             }
-        });
+        }
+
+        // Helper function to get cookie
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
 
         // --- Helper functions for messages ---
         function showError(message) {
@@ -270,6 +299,7 @@
 
         // --- Initial Load ---
         fetchBooks(0, 10); // Load first page, 10 items
+        checkAuth(); // Check authentication state
     });
 </script>
 </body>
