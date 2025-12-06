@@ -72,7 +72,7 @@
         const bookIdField = document.getElementById('book-id');
 
         // API Endpoint
-        const API_URL = window.APP_CONFIG.BACKEND_URL + '/books'; // Using the /books endpoint
+        const API_URL = window.APP_CONFIG.API_BASE_URL + '/books'; // Using the /books endpoint
 
         // --- 1. Check if we are editing or creating ---
         const urlParams = new URLSearchParams(window.location.search);

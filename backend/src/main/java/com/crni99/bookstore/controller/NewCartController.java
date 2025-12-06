@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/carts")
+@RequestMapping("/api/carts")
 @RequiredArgsConstructor
 @Slf4j
 public class NewCartController {

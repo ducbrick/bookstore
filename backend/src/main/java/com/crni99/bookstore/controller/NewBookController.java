@@ -13,7 +13,7 @@ import com.crni99.bookstore.model.Book;
 import com.crni99.bookstore.service.BookService;
 
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/api/books")
 public class NewBookController {
 
     private final BookService bookService;

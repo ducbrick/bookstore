@@ -13,7 +13,7 @@ import com.crni99.bookstore.service.BillingService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
 @RequiredArgsConstructor
 public class NewOrderController {
 	private final BillingService billingService;

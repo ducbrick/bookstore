@@ -108,7 +108,7 @@
         const authBtn = document.getElementById('auth-btn');
 
         // API Endpoint
-        const API_URL = window.APP_CONFIG.BACKEND_URL + '/books';
+        const API_URL = window.APP_CONFIG.API_BASE_URL + '/books';
 
         // --- 1. Main Function: Fetch and Render Books ---
         async function fetchBooks(page = 0, size = 10, term = '') {

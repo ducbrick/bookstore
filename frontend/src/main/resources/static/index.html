@@ -72,8 +72,8 @@
         const errorMsg = document.getElementById('error-message');
 
         // API Endpoints
-        const BOOK_API_URL = window.APP_CONFIG.BACKEND_URL + '/books'; // You must create this
-        const CART_API_URL = window.APP_CONFIG.BACKEND_URL + '/carts';    // This exists
+        const BOOK_API_URL = window.APP_CONFIG.API_BASE_URL + '/books'; // You must create this
+        const CART_API_URL = window.APP_CONFIG.API_BASE_URL + '/carts';    // This exists
 
         // --- 1. Main Function: Fetch and Render Books ---
         async function fetchBooks(page = 0, size = 6, term = '') {
