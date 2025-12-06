@@ -5,7 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.Cookie;
@@ -28,48 +30,12 @@ public class BookstoreFrontendController {
     @Value("${auth0.redirect-uri}")
     private String redirectUri;
 
+    @Value("${frontend.origin}")
+    private String frontendOrigin;
+
+
     public BookstoreFrontendController(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-    }
-
-    @GetMapping("/")
-    public String home() {
-        return "index.html";
-    }
-
-    @GetMapping("/login")
-    public String login() {
-        return "login.html";
-    }
-
-    @GetMapping("/cart")
-    public String cart() {
-        return "cart.html";
-    }
-
-    @GetMapping("/orders")
-    public String orders() {
-        return "orders.html";
-    }
-
-    @GetMapping("/form")
-    public String form() {
-        return "form.html";
-    }
-
-    @GetMapping("/oops")
-    public String error() {
-        return "error.html";
-    }
-
-    @GetMapping("/list")
-    public String list() {
-        return "list.html";
-    }
-
-    @GetMapping("/book")
-    public String book() {
-        return "list.html";
     }
 
     @GetMapping("/code")
@@ -105,14 +71,14 @@ public class BookstoreFrontendController {
                 response.addHeader("Set-Cookie", "access token=" + accessToken + "; Path=/");
 
                 // Redirect to home page
-                return "redirect:/";
+                return "redirect:" + frontendOrigin + "/";
             } else {
                 // Token exchange failed, redirect to login
-                return "redirect:/login";
+                return "redirect:" + frontendOrigin + "/login";
             }
         } catch (Exception e) {
             // Error occurred, redirect to login
-            return "redirect:/login";
+            return "redirect:" + frontendOrigin + "/login";
         }
     }
 }
