@@ -102,7 +102,7 @@
         const errorMsg = document.getElementById('error-message');
 
         // API Endpoints
-        const ORDERS_API_URL = window.APP_CONFIG.BACKEND_URL + '/orders';
+        const ORDERS_API_URL = window.APP_CONFIG.API_BASE_URL + '/orders';
 
         // --- 1. Main Function: Fetch and Render Orders ---
         async function fetchOrders(page = 0, size = 10, term = '') {
