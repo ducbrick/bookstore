@@ -12,6 +12,11 @@ services:
       - "8080:8080"
     networks:
       - bookstore_net
+    environment:
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    depends_on:
+      - redis
 
   # ===============================
   # BFF Server (Auth0 callback)
