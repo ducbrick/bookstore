@@ -35,7 +35,7 @@ services:
     build:
       context: ./frontend      # folder chứa Dockerfile của static server
       dockerfile: Dockerfile
-    container_name: frontend
+    container_name: bookstore-frontend
     ports:
       - "8088:8088"
     networks:
