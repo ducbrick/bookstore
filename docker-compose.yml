@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
 
   # ===============================
@@ -57,10 +55,6 @@ services:
       - app
       - bff
 
-networks:
-  bookstore_net:
-    driver: bridge
-
   # ===============================
   # Redis Service (Cache & Session)
   # ===============================
@@ -74,3 +68,10 @@ networks:
       - redis_data:/data
     networks:
       - bookstore_net
+
+volumes:
+  redis_data:
+
+networks:
+  bookstore_net:
+    driver: bridge
