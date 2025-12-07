@@ -5,12 +5,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.crni99.bookstore.util.RestPage;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -54,7 +54,7 @@ public class BookService {
             list = books.subList(startItem, toIndex);
         }
 
-        return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), books.size());
+        return new RestPage<>(list, PageRequest.of(currentPage, pageSize), books.size());
     }
 
     // 2. CACHE CHI TIẾT
