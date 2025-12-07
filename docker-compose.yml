@@ -56,3 +56,17 @@ services:
 networks:
   bookstore_net:
     driver: bridge
+
+  # ===============================
+  # Redis Service (Cache & Session)
+  # ===============================
+  redis:
+    image: redis:7.0-alpine
+    container_name: bookstore_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - bookstore_net
