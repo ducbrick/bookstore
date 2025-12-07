@@ -1,5 +1,7 @@
 package com.crni99.bookstore.model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -17,7 +19,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "books")
-public class Book {
+public class Book implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
