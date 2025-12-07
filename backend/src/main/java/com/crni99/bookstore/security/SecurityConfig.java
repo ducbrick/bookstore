@@ -43,10 +43,8 @@ public class SecurityConfig {
                 }))
                 .authorizeHttpRequests(auth -> auth
 												.requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
-												// .requestMatchers("/api/books/**").hasAuthority("SCOPE_admin")
-												// .requestMatchers("/api/api/books").hasAuthority("SCOPE_admin")
-												// .requestMatchers("/api/api/orders/*").hasAuthority("SCOPE_admin")
-												// .requestMatchers("/api/orders").hasAuthority("SCOPE_admin")
+												.requestMatchers("/api/books/**").hasAuthority("SCOPE_admin")
+												.requestMatchers("/api/orders").hasAuthority("SCOPE_admin")
                         .anyRequest().permitAll()
                 )
 								.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
