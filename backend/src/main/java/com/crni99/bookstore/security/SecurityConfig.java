@@ -35,18 +35,18 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 								.cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(Arrays.asList("http://localhost:8081"));
+                    config.setAllowedOrigins(Arrays.asList("http://localhost:8088"));
                     config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
                     config.setAllowedHeaders(Arrays.asList("*"));
                     config.setAllowCredentials(true);
                     return config;
                 }))
                 .authorizeHttpRequests(auth -> auth
-												.requestMatchers(HttpMethod.GET, "/books/**").permitAll()
-												.requestMatchers("/books/**").hasAuthority("SCOPE_admin")
-												.requestMatchers("/api/books").hasAuthority("SCOPE_admin")
-												.requestMatchers("/api/orders/*").hasAuthority("SCOPE_admin")
-												.requestMatchers("/orders").hasAuthority("SCOPE_admin")
+												.requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
+												// .requestMatchers("/api/books/**").hasAuthority("SCOPE_admin")
+												// .requestMatchers("/api/api/books").hasAuthority("SCOPE_admin")
+												// .requestMatchers("/api/api/orders/*").hasAuthority("SCOPE_admin")
+												// .requestMatchers("/api/orders").hasAuthority("SCOPE_admin")
                         .anyRequest().permitAll()
                 )
 								.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));

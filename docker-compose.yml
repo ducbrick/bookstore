@@ -3,21 +3,15 @@ services:
   # ===============================
   # Backend APP Server (port 8080)
   # ===============================
-  app:
+  backend:
     build:
       context: ./backend       # folder chứa Dockerfile của app server
       dockerfile: Dockerfile
-    container_name: app_server
+    container_name: bookstore-backend
     ports:
       - "8080:8080"
     networks:
       - bookstore_net
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-    depends_on:
-      - redis
 
   # ===============================
   # BFF Server (Auth0 callback)
@@ -26,18 +20,11 @@ services:
     build:
       context: ./bff       # folder chứa Dockerfile của bff server
       dockerfile: Dockerfile
-    container_name: bff_server
+    container_name: bookstore-bff
     ports:
       - "8081:8081"
     networks:
       - bookstore_net
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
-      AUTH0_CLIENT_ID: ${AUTH0_CLIENT_ID}
-      AUTH0_CLIENT_SECRET: ${AUTH0_CLIENT_SECRET}
-      REDIRECT_URI: "http://localhost:8081/code"
-      FRONTEND_ORIGIN: "http://localhost:8088"
 
   # ===============================
   # Static Frontend Server (Nginx)
@@ -46,13 +33,13 @@ services:
     build:
       context: ./frontend      # folder chứa Dockerfile của static server
       dockerfile: Dockerfile
-    container_name: frontend_server
+    container_name: bookstore-frontend
     ports:
       - "8088:8088"
     networks:
       - bookstore_net
     depends_on:
-      - app
+      - backend
       - bff
 
   # ===============================
